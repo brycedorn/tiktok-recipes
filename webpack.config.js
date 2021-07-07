@@ -4,19 +4,18 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const mode = process.env.NODE_ENV || 'development';
 const prod = mode === 'production';
 
-const baseUrl = 'https://bryce.io/';
-const path = 'tiktok-recipes';
+const url = 'https://bryce.io/tiktok-recipes';
 
 module.exports = {
 	entry: {
-		bundle: ['./web/main.js']
+		bundle: ['./src/main.js']
 	},
 	resolve: {
 		extensions: ['.js', '.svelte']
 	},
 	output: {
 		path: __dirname + '/public',
-		publicPath: prod ? `${baseUrl}${path}` : '/',
+		publicPath: prod ? url : '/',
 		filename: prod ? '[name].[hash].js' : '[name].js',
 		chunkFilename: '[name].[id].js'
 	},
@@ -36,10 +35,6 @@ module.exports = {
 			{
 				test: /\.css$/,
 				use: [
-					/**
-					 * MiniCssExtractPlugin doesn't support HMR.
-					 * For developing, use 'style-loader' instead.
-					 * */
 					prod ? MiniCssExtractPlugin.loader : 'style-loader',
 					'css-loader'
 				]
@@ -67,10 +62,10 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			title: 'My Liked TikTok Recipes',
 			description: 'Organizing recipes I\'ve come across so I can make them!',
-			image: `${baseUrl}${path}/bento.png`,
-			url: `${baseUrl}${path}`,
-			template: 'web/index.html',
-			favicon: 'web/bento.png'
+			image: `${url}/taco.png`,
+			url,
+			template: 'src/index.html',
+			favicon: 'src/taco.png'
 		})
 	],
 	devtool: prod ? false: 'source-map'

@@ -3,6 +3,7 @@
 	export let tags;
 	export let filtersExpanded = false;
 	export let filteredTags = [];
+	export let searchText = '';
 
 	// Keep immutable version of videos in memory
 	export let videosImm = [...videos];
@@ -14,28 +15,37 @@
 			videosMut = videosMut.filter(video => video.tags.some(tag => filteredTags.includes(tag)));
 		}
 
+		if (searchText.length > 0) {
+			videosMut = videosMut.filter(video => video.title.toLowerCase().indexOf(searchText.toLowerCase()) !==  -1);
+		}
+
 		videos = videosMut;
 	}
 
 	function handleTagClick(tag) {
 		let newFilteredTags = [...filteredTags];
-		
+
 		if (filteredTags.includes(tag)) {
 			newFilteredTags = filteredTags.filter(tag => tag !== tag);
 		} else {
 			newFilteredTags = [...filteredTags, tag];
 		}
-		
+
 		filteredTags = newFilteredTags;
 
 		filterVideos();
 	}
-	
+
+	function setSearchQuery(text) {
+		searchText = text;
+
+		filterVideos();
+	}
+
 	function toggleFilters() {
 		filtersExpanded = !filtersExpanded;
 	}
 
-	// TODO: this doesn't reset checkbox state ??
 	function resetFilters() {
 		filteredTags = [];
 		videos = [...videosImm];
@@ -46,21 +56,6 @@
 	h1 {
 		margin-top: 20px;
 	}
-	footer {
-		text-align: center;
-	}
-	.tag:hover, .tag:active {
-		text-decoration: none;
-	}
-	
-	.tag.selected {
-		color: #fff;
-		background: #5755d9;
-		border: #4b48d6 solid 1px;
-	}
-	.hashtag {
-		margin-right: 1px;
-	}
 	.tags {
 		max-height: 60px;
 		transition: max-height 250ms ease;
@@ -70,8 +65,19 @@
 	.tags.expanded {
 		max-height: 1000px;
 	}
+	.tag:hover, .tag:active {
+		text-decoration: none;
+	}
+	.tag.selected {
+		color: #fff;
+		background: #5755d9;
+		border: #4b48d6 solid 1px;
+	}
+	.hashtag {
+		margin-right: 1px;
+	}
 	.title {
-		background: rgba(0,0,0,0.5);
+		background: rgba(0,0,0,0.75);
 		border-radius: 8px;
 		word-wrap: break-word;
 		max-width: 230px;
@@ -84,14 +90,12 @@
 	li {
 		margin: 2px 6px;
 	}
-	li img, li div { 
-		border-radius: 8px; 
+	li img, li div {
+		border-radius: 8px;
 	}
 	img {
-		max-width: 250px;
-	}
-	footer {
-		margin-top: 80px;
+		width: 250px;
+		min-height: 400px;
 	}
 </style>
 
@@ -100,8 +104,11 @@
 		<div class="column col-1" />
 		<div class="column col-10">
 			<div class="hero hero-sm">
-				<h1>TikTok Recipes 🍱</h1>
+				<h1>TikTok Recipes 🌮</h1>
 				<p>Organizing recipes I've come across so I can make them!</p>
+			</div>
+			<div class="form-group col-4">
+				<input class="form-input" type="text"  on:input={(e) => setSearchQuery(e.target.value)} value={searchText} placeholder="Search">
 			</div>
 			<div class="tags mx-1 {filtersExpanded ? 'expanded' : ''}">
 				Tags:
@@ -121,9 +128,9 @@
 					{/if}
 				{/each}
 			</div>
-			<div class="col-2 btn-group btn-group-block my-2 py-2">
-				<a class="btn btn-primary" href={null} on:click={toggleFilters}>{filtersExpanded ? 'Hide' : 'Show'} More {filtersExpanded ? '🔼' : '🔽'}</a>
-				<a class="btn btn-default {filteredTags === [] ? '' : 'badge'}" data-badge={filteredTags.length || null} href={null} on:click={resetFilters}>Clear</a>
+			<div class="col-4 btn-group btn-group-block my-2 py-2">
+				<a class="btn btn-primary" href={null} on:click={toggleFilters}>{filtersExpanded ? 'Hide' : 'Show'} More Tags</a>
+				<a class="btn btn-default {filteredTags === [] ? '' : 'badge'}" data-badge={filteredTags.length || null} href={null} on:click={resetFilters}>Clear Tags</a>
 			</div>
 		</div>
 		<div class="column col-1" />
@@ -155,9 +162,9 @@
 		</div>
 		<div class="column col-2 col-md-1" />
 	</div>
-	<footer>
+	<footer class="text-center mt-2">
 		<p>
-			Created with ❤️ by <a href="https://bryce.io">bryce</a> in <a href="https://svelte.dev/">Svelte</a>. View <a href="https://github.com/brycedorn/tiktok-recipes">source</a>.
+			Created with 💜 by <a href="https://bryce.io">bryce</a> in <a href="https://svelte.dev/">Svelte</a>. View <a href="https://github.com/brycedorn/tiktok-recipes">source</a>.
 		</p>
 	</footer>
 </div>
