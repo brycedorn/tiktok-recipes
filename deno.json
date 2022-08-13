@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "start": "deno run -A --watch=static/,routes/ dev.ts",
+    "fetch:tiktoks": "deno run -A scripts/fetch-tiktoks.ts",
+    "fetch:images": "deno run --allow-write --allow-read scripts/fetch-images.ts"
+  },
+  "importMap": "./import_map.json"
+}
