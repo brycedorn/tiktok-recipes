@@ -88,7 +88,7 @@ export default function VideoList() {
     <Fragment>
       <div class={tw`w-1/2`}>
         <input type="text" class={tw`block w-full border rounded p-2 mb-4`} onInput={e => setSearchText(e.target.value)} value={searchText} placeholder="Search" />
-        <ul class={tw`overflow-scroll h-[85vh]`}>
+        <ul class={tw`overflow-y-scroll overflow-x-hidden h-[85vh]`}>
           {shuffledVideos.filter(searchFilter).map(video => (
             <li class={tw`p-2 my-2 cursor-pointer border rounded flex flex-nowrap ${activeVideo?.url === video.url && 'bg-gray-100'}`} onClick={() => setActiveVideo(video)}>
               <a>{video.meta.title}</a>
