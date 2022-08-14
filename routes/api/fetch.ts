@@ -1,32 +1,17 @@
 import { cheerio } from "cheerio";
 
-function sanitize(s: string) {
-  return s
-    .replace('url\"\:\"', '')
-    .replace('u002f/u002F', '')
-    .replaceAll('u002F', '')
-    .replace('\"','')
-    .replaceAll('\\','\/');
-}
+export const handler = async (request: Request): Promise<Response> => {
+  const { video } = await request.json();
 
-export const handler = async (req: Request): Promise<Response> => {
-  const request = await req.json();
-
-  const { video } = request;
-
-  const body = await fetch(`https://tiktok.com/${video}`);
-
-  const html = await body.text();
+  const response = await fetch(`https://tiktok.com/${video}`);
+  const html = await response.text();
 
   const $ = cheerio.load(html);
+  const appContext = $("#SIGI_STATE").text();
+  const json = JSON.parse(appContext);
+  const key = Object.keys(json.ItemModule)[0];
 
-  const test = $("html").text();
-
-  const mp4s = test.match(/url\":\"([^"]+)"/g);
-
-  const mp4 = sanitize(mp4s[2]);
-
-  return new Response(JSON.stringify({ mp4 }), {
+  return new Response(JSON.stringify({ ...json.ItemModule[key] }), {
     headers: { 'Content-Type': 'application/json' },
     status: 200,
   })
