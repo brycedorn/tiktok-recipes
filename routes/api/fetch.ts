@@ -5,6 +5,7 @@ export const handler = async (request: Request): Promise<Response> => {
   const response = await fetch(`https://tiktok.com/${video}`);
   const html = await response.text();
 
+  // @ts-expect-error Property 'load' does not exist on type '(selector: any, context: any, root: any, opts: any) => any'.
   const $ = cheerio.load(html);
   const appContext = $("#SIGI_STATE").text();
   const json = JSON.parse(appContext);
@@ -12,7 +13,7 @@ export const handler = async (request: Request): Promise<Response> => {
   const data = json.ItemModule[key];
 
   return new Response(JSON.stringify({ ...data }), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
     status: 200,
   });
 };

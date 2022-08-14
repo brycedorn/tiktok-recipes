@@ -1,7 +1,7 @@
 /** @jsx h */
 import { h } from "preact";
 import { tw } from "@twind";
-import VideoList from '../islands/VideoList.tsx';
+import VideoList from "../islands/VideoList.tsx";
 
 export default function Index() {
   return (
