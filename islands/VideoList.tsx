@@ -4,6 +4,17 @@ import { useState, useEffect, useRef } from 'preact/hooks';
 import { tw } from "@twind";
 import metadata from '../data/metadata.json' assert { type: 'json' };
 
+function shuffle(array) {
+  let i = array.length;
+  while (--i > 0) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [array[randomIndex], array[i]] = [array[i], array[randomIndex]];
+  }
+  return array;
+}
+
+const shuffledVideos = shuffle(metadata.videos);
+
 type VideoMetaType = {
   meta: {
     version: string;
@@ -37,6 +48,7 @@ export default function VideoList() {
   const [loading, setLoading] = useState(false);
   const [videoLoading, setVideoLoading] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [searchText, setSearchText] = useState('');
   
   const fetchAndUpdate = async () => {
     const response = await fetch('/api/fetch', {
@@ -57,6 +69,10 @@ export default function VideoList() {
     setVideoLoading(true);
   }
 
+  function searchFilter(video) {
+    return video.meta.title.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
+  }
+
   useEffect(() => {
     if (isMounted.current) {
       setLoading(true);
@@ -70,13 +86,16 @@ export default function VideoList() {
   
   return (
     <Fragment>
-      <ul class={tw`w-1/2 h-screen overflow-scroll`}>
-        {metadata.videos.map(video => (
-          <li class={tw`p-2 my-2 cursor-pointer border rounded flex flex-nowrap ${activeVideo?.url === video.url && 'bg-gray-100'}`} onClick={() => setActiveVideo(video)}>
-            <a>{video.meta.title}</a>
-          </li>
-        ))}
-      </ul>
+      <div class={tw`w-1/2`}>
+        <input type="text" class={tw`block w-full border rounded p-2 mb-4`} onChange={e => setSearchText(e.target.value)} value={searchText} placeholder="Search" />
+        <ul class={tw`overflow-scroll h-[85vh]`}>
+          {shuffledVideos.filter(searchFilter).map(video => (
+            <li class={tw`p-2 my-2 cursor-pointer border rounded flex flex-nowrap ${activeVideo?.url === video.url && 'bg-gray-100'}`} onClick={() => setActiveVideo(video)}>
+              <a>{video.meta.title}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
       <div class={tw`w-1/2 flex justify-center items-center`}>
         {loading && "Loading..."}
         {(videoLoading || videoPlaying) && (
