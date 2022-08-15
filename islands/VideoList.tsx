@@ -103,7 +103,7 @@ export default function VideoList() {
         <ul class={tw`overflow-y-scroll overflow-x-hidden h-[85vh]`}>
           {shuffledVideos.filter(searchFilter).map((video) => (
             <li
-              class={tw`p-2 my-2 cursor-pointer border rounded flex flex-nowrap ${
+              class={tw`p-2 my-2 cursor-pointer border rounded flex ${
                 activeVideo?.url === video.url && "bg-gray-100"
               }`}
               onClick={() => setActiveVideo(video)}
@@ -114,7 +114,13 @@ export default function VideoList() {
         </ul>
       </div>
       <div class={tw`w-1/2 flex justify-center items-center`}>
-        {loading && "Loading..."}
+        {(loading || !activeVideo) && (
+          <div
+            class={tw`p-2 my-2 h-[80vh] w-4/5 lg:w-1/2 border-2 border-dashed rounded flex justify-center items-center text-gray-400`}
+          >
+            {loading ? "Loading..." : "Select a video"}
+          </div>
+        )}
         {(videoLoading || videoPlaying) && (
           <video
             controls
@@ -124,16 +130,24 @@ export default function VideoList() {
             onLoadedData={() => setVideoPlaying(true)}
           />
         )}
-        {!loading && !videoPlaying && (
-          <img
-            class={tw`max-h-[80vh] cursor-pointer rounded w-auto ${
-              videoLoading && "opacity-80"
-            }`}
-            src={data?.video?.cover}
-            width={activeVideo?.meta?.thumbnail_width}
-            height={activeVideo?.meta?.thumbnail_height}
-            onClick={playVideo}
-          />
+        {activeVideo && !loading && !videoPlaying && (
+          <Fragment>
+            <span
+              class={tw`absolute text-9xl cursor-pointer text-white`}
+              onClick={playVideo}
+            >
+              ▶️
+            </span>
+            <img
+              class={tw`max-h-[80vh] cursor-pointer rounded w-auto ${
+                videoLoading && "opacity-80"
+              }`}
+              src={data?.video?.cover}
+              width={activeVideo?.meta?.thumbnail_width}
+              height={activeVideo?.meta?.thumbnail_height}
+              onClick={playVideo}
+            />
+          </Fragment>
         )}
       </div>
     </Fragment>
